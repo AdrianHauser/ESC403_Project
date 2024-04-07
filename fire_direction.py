@@ -1,5 +1,6 @@
 from preprocessing import read_tfrecords
 import numpy as np
+import torch
 
 def calculate_cosine_similarity(x1, y1, x2, y2, direction_deg):
     # Calculate the vectors from the first datapoint to the second datapoint and the direction
@@ -16,8 +17,11 @@ def calculate_cosine_similarity(x1, y1, x2, y2, direction_deg):
     return cosine_similarity
 
 def apply_cosine_similarity(firemask,direction_matrix2, func):
-    '''Calculates Cosine Similarity for all fire pixels in firemask on the whole raster'''
+    # Find indices where m1 equals 1
     indices = np.argwhere(firemask == 1)
+
+    if indices.size == 0:
+        return np.zeros((direction_matrix2.shape[0], direction_matrix2.shape[1]))
 
     res_list = list()
 
@@ -36,7 +40,9 @@ def apply_cosine_similarity(firemask,direction_matrix2, func):
         result[np.isnan(result)] = 1
         res_list.append(result)
 
-    sum_arrays = sum(res_list)
+    res_list = np.array(res_list)
+
+    sum_arrays = np.max(res_list, axis = 0)
     min_val = np.min(sum_arrays)
     max_val = np.max(sum_arrays)
 
@@ -44,11 +50,7 @@ def apply_cosine_similarity(firemask,direction_matrix2, func):
     
     return normalized_array
 
-
-def add_fire_direction_to_tensor(
-    tensor: torch.Tensor,
-    wind_direction_index: int,
-    fire_mask_index: int) -> torch.Tensor:
+def add_fire_direction_to_tensor(tensor, wind_direction_index: int, fire_mask_index: int):
 
     fire_mask = tensor[:, :, :, fire_mask_index].numpy()
     wind_direction = tensor[:, :, :, wind_direction_index].numpy()
