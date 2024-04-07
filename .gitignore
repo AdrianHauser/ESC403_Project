@@ -1,2 +1,5 @@
 Data/
 .idea/
+__pycache__/constants.cpython-311.pyc
+__pycache__/preprocessing.cpython-311.pyc
+__pycache__/tfrecord_reader.cpython-311.pyc
