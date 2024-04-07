@@ -56,6 +56,7 @@ def _compute_distance_matrix(matrix: np.ndarray) -> np.ndarray:
     Returns:
     - np.ndarray: The transformed matrix.
     """
+
     inverted_matrix = 1 - matrix
     distance_matrix = distance_transform_edt(inverted_matrix)
     distance_matrix[matrix == 1] = 0
@@ -71,6 +72,8 @@ def add_fire_distance_to_tensor(tensor: torch.Tensor, fire_mask_index: int) -> t
     distance_matrix = _compute_distance_matrix(tensor[:,:,:,fire_mask_index]) # Compute distance matrix on mask
     distance_tensor = torch.from_numpy(distance_matrix)
     distance_tensor = distance_tensor.unsqueeze(-1) # Unsqueeze adds dimension m to make it compatible
+    print(distance_tensor.shape)
+    print(tensor.shape)
     tensor_with_distance = torch.cat([distance_tensor, tensor], dim=-1)
 
     return tensor_with_distance

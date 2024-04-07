@@ -1,6 +1,8 @@
 import numpy as np
+import torch
 from scipy.ndimage import gaussian_filter
 import matplotlib.pyplot as plt
+from constants import DATA_STATS
 
 def discretize_wind_direction(wind_direction):
     """
@@ -26,6 +28,38 @@ def normalize_wind_speed(wind_speed, speed_min=0, speed_max=1):
     """
     return (wind_speed - speed_min) / (speed_max - speed_min)
 
+def direction_to_delta(direction):
+    """
+    Maps discrete wind direction to changes in coordinates (row, col).
+    """
+    mapping = {0: (-1, 0), 1: (-1, 1), 2: (0, 1), 3: (1, 1),
+               4: (1, 0), 5: (1, -1), 6: (0, -1), 7: (-1, -1)}
+    return mapping.get(direction, (0, 0))
+
+
+def spread_wind_influence(row, col, fire_mask, wind_direction, wind_speed, influence_matrix):
+    direction = wind_direction[row, col]
+    speed = wind_speed[row, col]
+    d_row, d_col = direction_to_delta(direction)
+    new_row, new_col = row + d_row, col + d_col
+
+    while 0 <= new_row < fire_mask.shape[0] and 0 <= new_col < fire_mask.shape[1]:
+        if influence_matrix[row, col] != 0:
+            current_value = min(influence_matrix[row, col] * speed, 2)
+        else:
+            current_value = speed
+
+        if fire_mask[new_row, new_col] == 1:
+            added_value = min(current_value + 1, 2)
+        else:
+            added_value = current_value
+
+        if influence_matrix[new_row, new_col] < added_value:
+            influence_matrix[new_row, new_col] = added_value
+
+        row, col = new_row, new_col
+        new_row, new_col = row + d_row, col + d_col
+
 def compute_wind_influence(fire_mask, wind_direction, wind_speed):
     """
     Calculates wind influence starting from each point of fire.
@@ -50,34 +84,35 @@ def compute_wind_influence(fire_mask, wind_direction, wind_speed):
     
     return final_influence
 
-def spread_wind_influence(row, col, fire_mask, wind_direction, wind_speed, influence_matrix):
-    direction = wind_direction[row, col]
-    speed = wind_speed[row, col]
-    d_row, d_col = direction_to_delta(direction)
-    new_row, new_col = row + d_row, col + d_col
 
-    while 0 <= new_row < fire_mask.shape[0] and 0 <= new_col < fire_mask.shape[1]:
-        if influence_matrix[row, col] != 0:
-            current_value = min(influence_matrix[row, col] * speed, 2)
-        else:
-            current_value = speed
-        
-        if fire_mask[new_row, new_col] == 1:
-            added_value = min(current_value + 1, 2)
-        else:
-            added_value = current_value
-        
-        if influence_matrix[new_row, new_col] < added_value:
-            influence_matrix[new_row, new_col] = added_value
 
-        row, col = new_row, new_col
-        new_row, new_col = row + d_row, col + d_col
 
-        
-def direction_to_delta(direction):
-    """
-    Maps discrete wind direction to changes in coordinates (row, col).
-    """
-    mapping = {0: (-1, 0), 1: (-1, 1), 2: (0, 1), 3: (1, 1),
-               4: (1, 0), 5: (1, -1), 6: (0, -1), 7: (-1, -1)}
-    return mapping.get(direction, (0, 0))
+def add_flow_accumulation_to_tensor(
+        tensor: torch.Tensor,
+        wind_direction_index: int,
+        wind_speed_index: int,
+        fire_mask_index: int) -> torch.Tensor:
+
+    # Get Input Tensors
+    discretized_wind_direction = discretize_wind_direction(tensor[:, :, :, wind_direction_index].numpy())
+
+    speed_min, speed_max = DATA_STATS.get('vs')[:2] # Get global min max wind speeds for normalization
+    normalized_wind_speed = normalize_wind_speed(
+        tensor[:, :, :, wind_speed_index].numpy(),
+        speed_min=speed_min,
+        speed_max=speed_max)
+
+    fire_mask = tensor[:, :, :, fire_mask_index].numpy()
+
+    tensor_shape = (64, 64, 1)
+    wind_influence_final = torch.empty((20,) + tensor_shape)
+
+    for i in range(tensor.shape[0]):
+        wind_influence = compute_wind_influence(fire_mask[i,:,:], discretized_wind_direction[i,:,:], normalized_wind_speed[i,:,:])
+        wind_influence = torch.from_numpy(wind_influence)
+        wind_influence = wind_influence.unsqueeze(-1) # Unsqueeze adds dimension m to make it compatible
+        wind_influence_final[i] = wind_influence
+
+    tensor = torch.cat([wind_influence_final, tensor], dim=-1)
+
+    return tensor
