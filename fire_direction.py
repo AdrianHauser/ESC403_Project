@@ -45,10 +45,10 @@ def apply_cosine_similarity(firemask,direction_matrix2, func):
     return normalized_array
 
 
-    def add_fire_direction_to_tensor(
-        tensor: torch.Tensor,
-        wind_direction_index: int,
-        fire_mask_index: int) -> torch.Tensor:
+def add_fire_direction_to_tensor(
+    tensor: torch.Tensor,
+    wind_direction_index: int,
+    fire_mask_index: int) -> torch.Tensor:
 
     fire_mask = tensor[:, :, :, fire_mask_index].numpy()
     wind_direction = tensor[:, :, :, wind_direction_index].numpy()
