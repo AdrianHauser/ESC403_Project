@@ -1,8 +1,6 @@
 import numpy as np
 import torch
-from scipy.ndimage import gaussian_filter
-import matplotlib.pyplot as plt
-from constants import DATA_STATS
+from src.data.constants import DATA_STATS
 
 def discretize_wind_direction(wind_direction):
     """
@@ -113,6 +111,6 @@ def add_flow_accumulation_to_tensor(
         wind_influence = wind_influence.unsqueeze(-1) # Unsqueeze adds dimension m to make it compatible
         wind_influence_final[i] = wind_influence
 
-    tensor = torch.cat([wind_influence_final, tensor], dim=-1)
+    tensor = torch.cat([tensor, wind_influence_final], dim=-1)
 
     return tensor
