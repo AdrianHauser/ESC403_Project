@@ -3,23 +3,23 @@ ESC403_Project
 │
 ├── Data
 │   │
-│   ├── interim
-│   │
 │   ├── next_day_wildfire_spread
 │   │
 │   ├── processed
 │   │
-│   └── testing
+│   ├── feature_engineered
+│   │
+│   └── trial
 │
 ├── Notebooks
 │
 ├── src
 │   │
-│   ├── data
+│   ├── data_processing
 │   │
-│   ├── features
+│   ├── feature_engineering
 │   │
-│   └── models
+│   └── model_training
 │
 ├── .gitignore
 ├── ESC403_Project.yml
