@@ -55,9 +55,3 @@ def add_fire_distance_to_tensor(
 
     tensor = torch.cat([tensor, distance_final], dim=-1)
     return tensor
-
-
-def add_flow_accumulation_to_tensor(
-    tensor: torch.Tensor, wind_index, fire_mask_index
-) -> torch.Tensor:
-    return None
