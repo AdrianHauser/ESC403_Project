@@ -124,7 +124,7 @@ def add_flow_accumulation_to_tensor(
     fire_mask = tensor[:, :, :, fire_mask_index].numpy()
 
     tensor_shape = (64, 64, 1)
-    wind_influence_final = torch.empty((16,) + tensor_shape)
+    wind_influence_final = torch.empty((tensor.shape[0],) + tensor_shape)
 
     for i in range(tensor.shape[0]):
         wind_influence = compute_wind_influence(

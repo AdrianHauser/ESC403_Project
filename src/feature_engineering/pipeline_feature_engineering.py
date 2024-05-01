@@ -47,7 +47,7 @@ class FeatureEngineering(Pipeline):
         X = add_fire_direction_to_tensor(X, wind_direction_index, fire_mask_index)
 
         # Save to Pickle
-        save_path = r"Data/trial/" if self.testing else r"pocessed/feature_engineered/"
+        save_path = r"Data/trial/" if self.testing else r"Data/feature_engineered/"
         save_object(X, path=ROOT_DIR / Path(save_path, "X_fe.pkl"))
         save_object(y, path=ROOT_DIR / Path(save_path, "y_fe.pkl"))
 

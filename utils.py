@@ -1,7 +1,7 @@
 import pickle
 
-import tensorflow as tf
 import torch
+import tensorflow as tf
 
 
 def save_object(obj, path: str):

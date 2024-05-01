@@ -5,7 +5,7 @@ to pytorch tensors and write to their respective pickle files
 
 from pathlib import Path
 
-from tfrecord_reader import get_dataset
+from src.data_processing.tfrecord_reader import get_dataset
 
 from config import ROOT_DIR
 from utils import save_object, tf_to_torch
