@@ -6,7 +6,7 @@ from src.feature_engineering.tasks.fire_direction import add_fire_direction_to_t
 from src.feature_engineering.tasks.fire_distance_matrix import add_fire_distance_to_tensor
 from src.feature_engineering.tasks.wind_aware_influence import add_flow_accumulation_to_tensor
 
-from config import ROOT_DIR
+from config import ROOT_DIR, DATA_TRIAL_DIR, DATA_PROCESSED_DIR, DATA_FEATURE_ENGINEERED_DIR
 from src.data_processing.constants import INPUT_FEATURES
 from src.feature_engineering import Pipeline
 from utils import save_object
@@ -19,11 +19,11 @@ class FeatureEngineering(Pipeline):
 
     def _setup(self) -> dict:
         """Setup phase."""
-        read_path = r"Data/trial/" if self.testing else r"Data/processed/"
+        read_dir = DATA_TRIAL_DIR if self.testing else DATA_PROCESSED_DIR
 
         return {
-            "X": load(ROOT_DIR / Path(read_path, "X_torch.pkl")),
-            "y": load(ROOT_DIR / Path(read_path, "y_torch.pkl")),
+            "X": load(read_dir / Path(r"X_torch.pkl")),
+            "y": load(read_dir / Path(r"y_torch.pkl")),
         }
 
     def _run(self, *args, **kwargs) -> torch.Tensor:
@@ -47,9 +47,9 @@ class FeatureEngineering(Pipeline):
         X = add_fire_direction_to_tensor(X, wind_direction_index, fire_mask_index)
 
         # Save to Pickle
-        save_path = r"Data/trial/" if self.testing else r"Data/feature_engineered/"
-        save_object(X, path=ROOT_DIR / Path(save_path, "X_fe.pkl"))
-        save_object(y, path=ROOT_DIR / Path(save_path, "y_fe.pkl"))
+        save_path = DATA_TRIAL_DIR if self.testing else DATA_FEATURE_ENGINEERED_DIR
+        save_object(X, path=save_path / Path(r"X_fe.pkl"))
+        save_object(y, path=save_path / Path(r"y_fe.pkl"))
 
 
     def run(self, *args, **kwargs):
