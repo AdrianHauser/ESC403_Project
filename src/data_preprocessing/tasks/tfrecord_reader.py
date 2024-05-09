@@ -2,13 +2,17 @@
 Reader to parse TensorFlow Records Files, contains utility functions to augment data.
 """
 
-
 import re
-from typing import Dict, List, Text, Tuple
 from pathlib import Path
+from typing import Dict, List, Text, Tuple
+
 import tensorflow as tf
 
-from src.data_processing.constants import DATA_STATS, INPUT_FEATURES, OUTPUT_FEATURES
+from src.data_preprocessing.tasks.constants import (
+    DATA_STATS,
+    INPUT_FEATURES,
+    OUTPUT_FEATURES,
+)
 
 
 ############# Utility Functions ###############
@@ -145,7 +149,7 @@ def _parse_fn(
     num_in_channels: int,
     clip_and_normalize: bool,
     clip_and_rescale: bool,
-    random_crop: bool
+    random_crop: bool,
 ) -> Tuple[tf.Tensor, tf.Tensor]:
     """Reads a serialized example.
 
@@ -209,7 +213,7 @@ def get_dataset(
     num_in_channels: int,
     clip_and_normalize: bool,
     clip_and_rescale: bool,
-    random_crop: bool
+    random_crop: bool,
 ) -> tf.data.Dataset:
     """Gets the dataset from the file pattern.
 
@@ -251,7 +255,7 @@ def get_dataset(
             num_in_channels,
             clip_and_normalize,
             clip_and_rescale,
-            random_crop
+            random_crop,
         ),
         num_parallel_calls=tf.data.experimental.AUTOTUNE,
     )

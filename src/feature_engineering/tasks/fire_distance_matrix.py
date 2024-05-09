@@ -1,7 +1,3 @@
-"""
-Contains all feature engineering functions.
-"""
-
 import numpy as np
 import torch
 from scipy.ndimage import distance_transform_edt

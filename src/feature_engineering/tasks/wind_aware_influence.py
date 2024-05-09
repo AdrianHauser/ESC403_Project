@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 
-from src.data_processing.constants import DATA_STATS
+from src.data_preprocessing.tasks.constants import DATA_STATS
 
 
 def discretize_wind_direction(wind_direction):

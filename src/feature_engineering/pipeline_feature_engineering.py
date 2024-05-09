@@ -1,15 +1,20 @@
+import os
+import pickle
 from pathlib import Path
 
 import torch
 from joblib import load
-from src.feature_engineering.tasks.fire_direction import add_fire_direction_to_tensor
-from src.feature_engineering.tasks.fire_distance_matrix import add_fire_distance_to_tensor
-from src.feature_engineering.tasks.wind_aware_influence import add_flow_accumulation_to_tensor
 
-from config import ROOT_DIR, DATA_TRIAL_DIR, DATA_PROCESSED_DIR, DATA_FEATURE_ENGINEERED_DIR
-from src.data_processing.constants import INPUT_FEATURES
+from config import DATA_FEATURE_ENGINEERED_DIR, DATA_PROCESSED_DIR, DATA_TRIAL_DIR
+from src.data_preprocessing.tasks.constants import INPUT_FEATURES
 from src.feature_engineering import Pipeline
-from utils import save_object
+from src.feature_engineering.tasks.fire_direction import add_fire_direction_to_tensor
+from src.feature_engineering.tasks.fire_distance_matrix import (
+    add_fire_distance_to_tensor,
+)
+from src.feature_engineering.tasks.wind_aware_influence import (
+    add_flow_accumulation_to_tensor,
+)
 
 
 class FeatureEngineering(Pipeline):
@@ -46,15 +51,21 @@ class FeatureEngineering(Pipeline):
         # Add Fire Direction
         X = add_fire_direction_to_tensor(X, wind_direction_index, fire_mask_index)
 
-        # Save to Pickle
-        save_path = DATA_TRIAL_DIR if self.testing else DATA_FEATURE_ENGINEERED_DIR
-        save_object(X, path=save_path / Path(r"X_fe.pkl"))
-        save_object(y, path=save_path / Path(r"y_fe.pkl"))
+        # Ensure the save directory exists, define the file paths
+        save_dir = DATA_TRIAL_DIR if self.testing else DATA_FEATURE_ENGINEERED_DIR
+        os.makedirs(save_dir, exist_ok=True)
+        X_fe_path = save_dir / Path("X_fe.pkl")
+        y_fe_path = save_dir / Path("y_fe.pkl")
 
+        # Write X_torch, y_torch to file
+        with open(X_fe_path, "wb") as f:
+            pickle.dump(X, f)
+        with open(y_fe_path, "wb") as f:
+            pickle.dump(y, f)
 
     def run(self, *args, **kwargs):
         setup_result = self._setup()
-        run_result = self._run(**setup_result)
+        self._run(**setup_result)
 
 
 if __name__ == "__main__":
