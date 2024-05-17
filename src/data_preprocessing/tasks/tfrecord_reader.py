@@ -1,5 +1,6 @@
 """
 Reader to parse TensorFlow Records Files, contains utility functions to augment data.
+Provided by: https://www.kaggle.com/code/fantineh/data-reader-and-visualization
 """
 
 import re
