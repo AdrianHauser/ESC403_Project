@@ -1,7 +1,9 @@
+import os
 import pickle
+import shutil
 
-import torch
 import tensorflow as tf
+import torch
 
 
 def save_object(obj, path: str):
@@ -16,3 +18,16 @@ def tf_to_torch(tf_tensor: tf.Tensor) -> torch.Tensor:
     np_array = tf_tensor.numpy()
     torch_tensor = torch.tensor(np_array)
     return torch_tensor
+
+
+def move_all_files_from_folder(source, destination):
+    files = os.listdir(source)
+    file_count = len(files)
+
+    if len(list) == 0:
+        print(f"No files in source {source}")
+    else:
+        for file in files:
+            file_name = os.path.join(source, file)
+            shutil.move(file_name, destination)
+        print(f"{file_count} files moved to {destination}")

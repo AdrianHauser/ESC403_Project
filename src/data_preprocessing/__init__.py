@@ -1,8 +1,8 @@
 class Pipeline:
     """Base class for pipelines."""
 
-    def __init__(self, testing):
-        self.testing = testing
+    def __init__(self, download: bool):
+        self.download = download
 
     def _setup(self):
         """Setup phase."""

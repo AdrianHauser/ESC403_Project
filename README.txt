@@ -10,9 +10,9 @@ ESC403_Project
 │
 ├── Data
 │   │
-│   ├── next_day_wildfire_spread
+│   ├── raw
 │   │
-│   ├── processed
+│   ├── preprocessed
 │   │
 │   ├── feature_engineered
 │   │
