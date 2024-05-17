@@ -1,9 +1,11 @@
-Load raw kaggle data to Data/next_day_wildfire_spread
+Load Data
 
-src/data_processing/parse_data_to_pickle.py read the .tfrecord files and writes them to Data/processed and a small subset to Data/trial for testing purposes.
+src/data_processing/pipeline_data_preprocessing: Loads data from Kaggle to Data/raw. Reads it to torch tensors and saves it in preprocessed in .pkl format. Also writes a small trial-subset to Data/trial for testing purposes.
 
 The pipeline src/feature_engineering.pipeline_feature_engineering.py executes feature engineering and data enrichment fuctions on the torch tensors saved in 
-Data/processed and writes the enriched tensors to Data/feature_engineered.
+Data/preprocessed and writes the enriched tensors to Data/feature_engineered again in .pkl format.
+
+All modelling was done in Jupyter Notebooks stored in /Notebooks. Most models were trained in Google Colab to use GPU's.
 
 # Overview:
 ESC403_Project
@@ -22,7 +24,7 @@ ESC403_Project
 │
 ├── src
 │   │
-│   ├── data_processing
+│   ├── data_preprocessing
 │   │
 │   ├── feature_engineering
 │   │
