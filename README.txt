@@ -1,3 +1,5 @@
+Next Day Wildfire Prediciton Project based on: https://www.kaggle.com/datasets/fantineh/next-day-wildfire-spread
+
 Load Raw Data
 src/data_processing/pipeline_data_preprocessing: Loads data from Kaggle to Data/raw. Reads it to torch tensors and saves it in preprocessed in .pkl format. Also writes a small trial-subset to Data/trial for testing purposes.
 
