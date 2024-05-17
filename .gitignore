@@ -3,4 +3,5 @@
 .idea/
 *__pycache__
 *.DS_Store
+Data/feature_engineered/rf_complete.joblib
 src/data_preprocessing/tasks/kaggle.json
